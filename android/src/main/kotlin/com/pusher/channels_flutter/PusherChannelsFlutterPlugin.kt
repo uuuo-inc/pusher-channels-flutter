@@ -1,5 +1,6 @@
 package com.pusher.channels_flutter
 
+import android.app.Activity
 import com.google.gson.Gson
 import com.pusher.client.ChannelAuthorizer
 import com.pusher.client.Pusher
@@ -10,7 +11,6 @@ import com.pusher.client.connection.ConnectionState
 import com.pusher.client.connection.ConnectionStateChange
 import com.pusher.client.util.HttpChannelAuthorizer
 import io.flutter.Log
-import android.app.Activity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -87,6 +87,10 @@ class PusherChannelsFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     private fun callback(method: String, args: Any) {
+        if (activity == null) {
+            Log.w(TAG, "$method: Already detached from activity.")
+            return
+        }
         activity!!.runOnUiThread {
             methodChannel.invokeMethod(method, args)
         }
